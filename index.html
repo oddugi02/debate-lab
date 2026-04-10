@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>토론 플랫폼 | 아키텍트</title>
+    <meta name="description" content="논리적이고 심도 깊은 토론을 위한 프리미엄 카드형 토론 플랫폼입니다. 설득력을 높이고 다양한 의견을 나누어 보세요.">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div id="message" class="message" style="display:none"></div>
+
+  <div id="app" style="display:none">
+    <header>
+      <div class="header-left">
+        <span id="nickname" class="nickname"></span>
+        <span id="side-badge" class="side-badge"></span>
+        <div id="coin-display" class="coin-display" style="display:none">
+          <span class="coin-label">나의 코인:</span>
+          <span class="coin-icon">🪙</span>
+          <span id="my-coins" class="coin-amount">0</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <button id="leaderboard-btn" class="btn-secondary" style="display:none">리더보드</button>
+        <button id="open-modal-btn" class="btn-primary" style="display:none">의견 제출</button>
+      </div>
+    </header>
+
+    <div class="topic-bar">
+      <h1 id="debate-title" class="debate-title"></h1>
+    </div>
+
+    <div class="reward-system-banner">
+      <div class="banner-content">
+        <span class="banner-icon">🔔</span>
+        <p><strong>보상 시스템 안내:</strong> 논리적인 설득을 통해 상대를 <strong>설득한 사람에게 100코인</strong>을, 지적 유연성을 발휘해 <strong>설득된 사람에게 50코인</strong>을 지급합니다.</p>
+      </div>
+    </div>
+
+    <main>
+      <div class="debate-columns">
+        <!-- Pro Column -->
+        <div class="side-column column-pro">
+          <div class="side-header">
+            <h3>찬성</h3>
+            <div class="header-right">
+              <span id="pro-count" class="count-badge">0</span>
+            </div>
+          </div>
+          <div class="side-body">
+            <div class="slider-controls" id="pro-slider-controls">
+              <button class="nav-btn prev" id="pro-prev-btn">&larr;</button>
+              <button class="nav-btn next" id="pro-next-btn">&rarr;</button>
+            </div>
+            <div id="pro-opinions-list" class="opinions-list">
+              <p class="empty-text">아직 찬성 의견이 없습니다.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Con Column -->
+        <div class="side-column column-con">
+          <div class="side-header">
+            <h3>반대</h3>
+            <div class="header-right">
+              <span id="con-count" class="count-badge">0</span>
+            </div>
+          </div>
+          <div class="side-body">
+            <div class="slider-controls" id="con-slider-controls">
+              <button class="nav-btn prev" id="con-prev-btn">&larr;</button>
+              <button class="nav-btn next" id="con-next-btn">&rarr;</button>
+            </div>
+            <div id="con-opinions-list" class="opinions-list">
+              <p class="empty-text">아직 반대 의견이 없습니다.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Opinion Submit Modal -->
+  <div id="opinion-modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>의견 제출</h2>
+        <button class="modal-close" id="close-opinion-modal">&times;</button>
+      </div>
+      <div class="modal-body form-body">
+        <div class="form-group">
+          <label>핵심 주장</label>
+          <textarea id="opinion-core-claim" placeholder="이 주제에 대한 핵심 주장을 짧게 남겨주세요." rows="2"></textarea>
+        </div>
+
+        <div id="opinion-reasons-container" class="reasons-container">
+          <!-- dynamically added reasons go here -->
+        </div>
+        <button id="opinion-add-reason-btn" class="btn-secondary">+ 근거 추가하기</button>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-opinion-btn" class="btn-primary">제출하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Rebuttal Modal -->
+  <div id="rebuttal-modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>반론 (설득하기)</h2>
+        <button class="modal-close" id="close-rebuttal-modal">&times;</button>
+      </div>
+      <div class="modal-body form-body">
+        <!-- Step 1: Select text -->
+        <div id="rebuttal-step-1">
+          <p class="instruction">아래 의견에서 <strong>반박하고 싶은 부분(문장 또는 단어)</strong>을 드래그하여 텍스트를 선택해주세요.</p>
+          <div class="source-text-box" id="rebuttal-source-text">
+            <!-- original text populated here -->
+          </div>
+          <div class="selected-text-preview" id="rebuttal-selected-preview" style="display:none;">
+            <p><strong>선택된 부분:</strong></p>
+            <blockquote id="rebuttal-selected-text-display"></blockquote>
+            <p class="step-guide">아래에서 이 부분에 대한 반박을 작성해주세요 ↓</p>
+          </div>
+        </div>
+
+        <!-- Step 2: Write Rebuttal -->
+        <div id="rebuttal-step-2" class="disabled-section">
+          <div class="form-group mt-1">
+            <label>핵심 주장</label>
+            <textarea id="rebuttal-core-claim" placeholder="한 줄로 반론의 핵심을 적어주세요." rows="2" disabled></textarea>
+          </div>
+          <div id="rebuttal-reasons-container" class="reasons-container">
+            <!-- dynamically added reasons go here -->
+          </div>
+          <button id="rebuttal-add-reason-btn" class="btn-secondary" disabled>+ 근거 추가하기</button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-rebuttal-btn" class="btn-primary" disabled>제출하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Persuaded Modal -->
+  <div id="persuaded-modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>설득됐어요!</h2>
+        <button class="modal-close" id="close-persuaded-modal">&times;</button>
+      </div>
+      <div class="modal-body form-body">
+        <div class="drag-instruction">
+          아래 내용 중 <strong>설득된 근거를 선택해주세요.(복수선택 가능)</strong>
+        </div>
+        <div id="persuaded-source-text" class="source-text-container persuaded-mode"></div>
+        
+        <div id="persuaded-step-2" class="disabled-section">
+          <div id="persuaded-selected-preview" class="selected-text-preview" style="display:none;">
+            <strong>선택된 근거:</strong> <span id="persuaded-selected-text-display">0개 선택됨</span>
+          </div>
+
+          <div class="keyword-selection-area">
+            <div class="keyword-group">
+              <div class="chips-container">
+                <div class="keyword-chip" data-keyword="#논리적이에요">#논리적이에요</div>
+                <div class="keyword-chip" data-keyword="#객관적이에요">#객관적이에요</div>
+                <div class="keyword-chip" data-keyword="#설명력이좋아요">#설명력이좋아요</div>
+              </div>
+            </div>
+            <div class="keyword-group">
+              <div class="chips-container">
+                <div class="keyword-chip" data-keyword="#새로워요">#새로워요</div>
+                <div class="keyword-chip" data-keyword="#놀라워요">#놀라워요</div>
+                <div class="keyword-chip" data-keyword="#관점이확장됐어요">#관점이확장됐어요</div>
+              </div>
+            </div>
+          </div>
+
+          <textarea id="persuaded-reason" placeholder="설득된 이유를 간략하게 남겨주세요. 해당의견은 스레드 하단에 공유됩니다." rows="3" disabled></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="submit-persuaded-btn" class="btn-primary" disabled>제출하기</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaderboard Modal -->
+  <div id="leaderboard-modal-overlay" class="modal-overlay" style="display:none">
+    <div class="modal">
+      <div class="modal-header">
+        <h2>코인 리더보드</h2>
+        <button id="close-leaderboard-btn" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="leaderboard-container" class="leaderboard-container">
+          <!-- Leaderboard items will be rendered here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Template for Reason Block -->
+  <template id="reason-block-template">
+    <div class="reason-block">
+      <div class="reason-label-container">
+        <span class="reason-number-label">근거</span>
+      </div>
+      <div class="reason-header">
+        <input type="text" class="reason-title" placeholder="근거 제목" />
+        <button class="remove-reason-btn" title="삭제">&times;</button>
+      </div>
+      <textarea class="reason-desc" placeholder="근거에 대한 상세 설명 (최대 200자)" maxlength="200" rows="3"></textarea>
+      <div class="char-count">0 / 200</div>
+    </div>
+  </template>
+
+  <script src="https://debate-md2-2603.web.app/debate-core.js" data-architect-id="zero"></script>
+  <script src="app.js"></script>
+</body>
+
+</html>
