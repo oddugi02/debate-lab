@@ -157,38 +157,6 @@ function loadAllData() {
       }
     });
 
-    // -- Dynamic Dummy Rebuttal against User's Opinion --
-    if (myInfo && myInfo.nickname) {
-      const myOpinions = allOpinions.filter(op => op.realNickname === myInfo.nickname);
-      if (myOpinions.length > 0) {
-        const myFirstOp = myOpinions[myOpinions.length - 1]; // Oldest
-        const alreadyHasDummyReb = allRebuttals.some(reb => reb.id === "reb-dynamic-opponent-1");
-        
-        if (!alreadyHasDummyReb) {
-          const opponentSide = myInfo.side === "pro" ? "con" : "pro";
-          const _selText = myFirstOp.reasons && myFirstOp.reasons.length > 0 
-              ? myFirstOp.reasons[0].description 
-              : "(사용자님의 근거 전체 내용)";
-              
-          allRebuttals.push({
-            id: "reb-dynamic-opponent-1",
-            targetId: myFirstOp.id,
-            targetReasonIndex: 0,
-            targetAuthorNickname: myInfo.nickname,
-            selectedText: _selText,
-            side: opponentSide,
-            coreClaim: "반대 입장에서 봤을 때, 그 의견은 일리가 있지만 치명적인 한계가 뚜렷합니다.",
-            reasons: [
-              { title: "예상치 못한 부작용", description: "실제 적용 시에는 긍정적 측면보다 현장에서 겪는 마찰과 부작용의 빈도가 훨씬 높습니다. 보수적인 접근이 필요합니다." }
-            ],
-            realNickname: "dummy_opponent_123",
-            nickname: "냉철한 셜록",
-            timestamp: myFirstOp.timestamp + 10000
-          });
-        }
-      }
-    }
-    // ----------------------------------------------------
 
     calculateCoins();
     buildThreads();
