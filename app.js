@@ -401,11 +401,11 @@ function renderStream() {
   if (conIndex >= cons.length) conIndex = Math.max(0, cons.length - 1);
 
   proListContainer.innerHTML = pros.length > 0
-    ? `<div class="card thread-container">${renderCardInner(pros[proIndex], "opinion", proIndex)}</div>`
+    ? `<div class="card thread-container">${renderCardInner(pros[proIndex], "opinion", pros.length - 1 - proIndex)}</div>`
     : '<p class="empty-text">아직 찬성 의견이 없습니다.</p>';
 
   conListContainer.innerHTML = cons.length > 0
-    ? `<div class="card thread-container">${renderCardInner(cons[conIndex], "opinion", conIndex)}</div>`
+    ? `<div class="card thread-container">${renderCardInner(cons[conIndex], "opinion", cons.length - 1 - conIndex)}</div>`
     : '<p class="empty-text">아직 반대 의견이 없습니다.</p>';
 
   document.getElementById("pro-prev-btn").disabled = proIndex <= 0;
