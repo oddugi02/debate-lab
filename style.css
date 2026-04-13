@@ -451,7 +451,19 @@ main {
   width: 100%;
   margin-bottom: 1.5rem;
   break-inside: avoid;
+  overflow-x: auto; /* Prevent deep threads from squishing */
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.thread-container::-webkit-scrollbar {
+  height: 6px;
+}
+.thread-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+.thread-container::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 /* Rebuttal Card inside Threads */
@@ -461,8 +473,17 @@ main {
 }
 
 .inner-rebuttal {
+  min-width: 260px; /* Prevent single-character vertical squishing */
   border-bottom: 1px solid #eaeaea;
 }
+
+/* Overrides to save horizontal space in deep threads */
+.inner-rebuttal .card-header { padding: 0.75rem 1rem 0.5rem; }
+.inner-rebuttal .card-body { padding: 0 1rem 0.75rem; }
+.inner-rebuttal .rebuttal-target-quote { margin: 0 1rem 0.75rem; padding: 0.5rem 0.75rem 0.5rem 1rem; }
+.inner-rebuttal .reasons-list { margin-top: 0.75rem; gap: 1rem; }
+.inner-rebuttal .reason-item { padding: 0.75rem 0.75rem 0.75rem 1rem; border-left-width: 2px; }
+
 
 .inner-rebuttal:last-child {
   border-bottom: none;
@@ -521,7 +542,7 @@ main {
 
 .reason-item {
   background: white;
-  padding: 1rem 1rem 1rem 1.75rem;
+  padding: 0.85rem 0.85rem 0.85rem 1.25rem;
   border-radius: 8px;
   border-left: 4px solid #111;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
@@ -530,7 +551,7 @@ main {
 /* Nested thread container */
 .reason-thread-replies {
   margin-top: 1rem;
-  padding-left: 1.5rem;
+  padding-left: 0.75rem;
   border-left: 2px solid #eaeaea;
   display: flex;
   flex-direction: column;
